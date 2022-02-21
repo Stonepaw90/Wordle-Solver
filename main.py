@@ -72,9 +72,9 @@ def wordle_filter_by_result(dict_word, guess_word, result_of_guess):
     dict_word:: the word to Checks
     guess_word:: the most recent guess that allows us to filter the dictionary
     result_of_guess:: a key to help us see which letters of the guess are right.
-    for example: bwwbc
-    c means correct letter correct location, used when you guess the right letter in the final word.
-    w means correct letter wrong location, used when your word contains a letter in the final word.
+    for example: gyybg
+    g means correct letter correct location, used when you guess the right letter in the final word.
+    y means correct letter wrong location, used when your word contains a letter in the final word.
     b means wrong letter, used when a letter is not in the final answer
     returns:: boolean for if the test passed or failed
     """
@@ -126,14 +126,15 @@ for i in result_list:
     break_flag = False
     if i == "ggggg":
         st.title("You did it! Congratulations.")
+        st.balloons()
         done = True
     for j in i:
         if j not in ["g","y","b"]:
             break_flag = True
     if break_flag:
       st.write("Please enter either `g`, `y`, or `b`.")
-      st.exit()
-        
+      st.stop()
+
 if not done:
     input_dict = dict(zip(guess_list, result_list))
     for i, j in input_dict.items():
@@ -142,9 +143,13 @@ if not done:
     word_dict = best_words(fivedict, top_26_dict)
     if len(word_dict) > 1:
         num_display = st.slider("How many suggested guesses should we display? (max 50)", min_value=1, max_value=min(len(word_dict), 50), step = 1, value = 1)
-    else:
+    elif len(word_dict) == 1:
         st.write("There is just one option.")
         num_display = 1
+    elif len(word_dict) == 0:
+        st.title("There are no options that the word could be. Try checking your inputs.")
+        st.stop()
+        num_display = 0
     df = pd.DataFrame(word_dict.items(), columns = ["Words", "Values"]) #convert to dataframe
     df = df.sort_values(by = 'Values', ascending=False) #Sort by values, not alphabetical
     df = df.reset_index(drop = True) #reset index to 0, 1, 2...
