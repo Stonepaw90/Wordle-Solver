@@ -62,7 +62,7 @@ def best_words(dictionary, letter_frequency, duplicates_weight=1):
         for l in word_set:
             # weight += (1/SQRT[word.count(l)])*letter_frequency[l]
             weight += 1 / word.count(l) * letter_frequency[l] * duplicates_weight
-        word_dict[word] = weight
+        word_dict[word] = int(weight)
     return word_dict
 
 
