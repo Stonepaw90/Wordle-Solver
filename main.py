@@ -1,8 +1,7 @@
-#import random
 import streamlit as st
 # Made by Abraham Holleran
-#SQRT = {i: i ** .5 for i in range(1, n + 1)}
-#CBRT = {i: i ** (1 / 3) for i in range(1, n + 1)}
+# This was ported over to streamlit in a half hour, it's not polished at all.
+# I want to get rid of the duplicate lines of code for each result and each guess.
 n = 5
 def contains_duplicates(string):
     return len(set(string)) < len(string)
@@ -101,17 +100,6 @@ def wordle_filter_dict(recent_guess, guess_result, dicti):
     return result
 
 
-#def main(n=5):
-#    fivedict = get_dictionary(n, False)
-#    fivedict = wordle_filter_dict(recent_guess="penis", guess_result="bybbb", dicti=fivedict)
-#    fivedict = wordle_filter_dict(recent_guess="ghoul", guess_result="byybb", dicti=fivedict)
-#    fivedict = wordle_filter_dict(recent_guess="hoard", guess_result="yybyb", dicti=fivedict)
-#    # fivedict = wordle_filter_dict(recent_guess = "xylic", guess_result = "bgbgg", dicti = fivedict)
-#    top_26_dict = common_letters(fivedict)
-#    guess = best_words(fivedict, top_26_dict)[0][1]
-#    st.write(guess)
-
-
 st.title("Solver for [Wordle](https://www.nytimes.com/games/wordle/index.html)")
 st.markdown('''
 ### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:
@@ -123,23 +111,6 @@ st.write(
 fivedict = get_dictionary(n, False)
 col = st.columns(2)
 
-# guess_1 = col[0].text_input("What was your first guess?", max_chars = 5)
-# result_1 = col[1].text_input("What was the result of your first guess, using only b,y,g?", max_chars = 5)
-# guess_2 = col[0].text_input("What was your second guess?", max_chars = 5)
-# result_2 = col[1].text_input("What was the result of your second guess, using only b,y,g?", max_chars = 5)
-# guess_3 = col[0].text_input("What was your third guess?", max_chars = 5)
-# result_3 = col[1].text_input("What was the result of your third guess, using only b,y,g?", max_chars = 5)
-# guess_4 = col[0].text_input("What was your forth guess?", max_chars = 5)
-# result_4 = col[1].text_input("What was the result of your forth guess, using only b,y,g?", max_chars = 5)
-# guess_5 = col[0].text_input("What was your fifth guess?", max_chars = 5)
-# result_5 = col[1].text_input("What was the result of your fifth guess, using only b,y,g?", max_chars = 5)
-# guess_6 = col[0].text_input("What was your sixth guess?", max_chars = 5)
-# result_6 = col[1].text_input("What was the result of your sixth guess, using only b,y,g?", max_chars = 5)
-ordinal = ["first", "second", "third", "forth", "fifth", "sixth"]
-guess_list = []
-result_list = []
-for i in range(6):
-    pass
 guess_1 = col[0].text_input("What was your first guess?", max_chars = 5)
 result_1 = col[1].text_input("What was the result of your first guess, using only b,y,g?", max_chars = 5)
 guess_2 = col[0].text_input("What was your second guess?", max_chars = 5)
