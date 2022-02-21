@@ -1,7 +1,12 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 # Made by Abraham Holleran
 # This was ported over to streamlit in a half hour, it's not polished at all.
 # I want to get rid of the duplicate lines of code for each result and each guess.
+
+st.set_page_config(page_title = "Wordle Solver")
+
 n = 5
 def contains_duplicates(string):
     return len(set(string)) < len(string)
@@ -50,16 +55,15 @@ def best_words(dictionary, letter_frequency, duplicates_weight=1):
     It evaluates each dictionary word by summing up the occurences for each letter.
     returns a list of tuples and the tuples are the weight with the word.
     """
-    word_list = []
+    word_dict = {}
     for word in dictionary:
         word_set = word
         weight = 0
         for l in word_set:
             # weight += (1/SQRT[word.count(l)])*letter_frequency[l]
             weight += 1 / word.count(l) * letter_frequency[l] * duplicates_weight
-        word_list.append((weight, word))
-
-    return sorted(word_list, reverse=True)
+        word_dict[word] = weight
+    return word_dict
 
 
 def wordle_filter_by_result(dict_word, guess_word, result_of_guess):
@@ -105,29 +109,19 @@ st.markdown('''
 ### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:
 ''')
 st.write(
-    "Welcome to a solver for Wordle! Just enter the result of your guess and the solver will print out your best option for a guess. In this version of Wordle, duplicate letters are weighted less. Also, format the result of your guess by typing a g for a correct letter guessed, y for a letter in the wrong spot, and b for a letter that's not in the correct wordle. For example, you might enter \"bbgyb\". Enjoy!")
+    "Welcome to a solver for Wordle! Just enter the guesses and their results and the solver will print out your best options to guess. In this version of Wordle, duplicate letters are weighted less. Also, format the result of your guess by typing a g for a correct letter guessed, y for a letter in the wrong spot, and b for a letter that's not in the correct wordle. For example, you might enter \"bbgyb\". Enjoy!")
 
 
 fivedict = get_dictionary(n, False)
 col = st.columns(2)
+ordinal = ['first', 'second', 'third', 'forth', 'fifth', 'sixth']
+guess_list = []
+result_list = []
+for i in range(6):
+    guess_list.append(col[0].text_input(f"What was your {ordinal[i]} guess?", max_chars = 5))
+    result_list.append(col[1].text_input(f"What was the result of your {ordinal[i]} guess, using only b,y,g?", max_chars=5))
 
-guess_1 = col[0].text_input("What was your first guess?", max_chars = 5)
-result_1 = col[1].text_input("What was the result of your first guess, using only b,y,g?", max_chars = 5)
-guess_2 = col[0].text_input("What was your second guess?", max_chars = 5)
-result_2 = col[1].text_input("What was the result of your second guess, using only b,y,g?", max_chars = 5)
-guess_3 = col[0].text_input("What was your third guess?", max_chars = 5)
-result_3 = col[1].text_input("What was the result of your third guess, using only b,y,g?", max_chars = 5)
-guess_4 = col[0].text_input("What was your forth guess?", max_chars = 5)
-result_4 = col[1].text_input("What was the result of your forth guess, using only b,y,g?", max_chars = 5)
-guess_5 = col[0].text_input("What was your fifth guess?", max_chars = 5)
-result_5 = col[1].text_input("What was the result of your fifth guess, using only b,y,g?", max_chars = 5)
-guess_6 = col[0].text_input("What was your sixth guess?", max_chars = 5)
-result_6 = col[1].text_input("What was the result of your sixth guess, using only b,y,g?", max_chars = 5)
-
-
-
-
-for i in [result_1, result_2, result_3, result_4, result_5, result_6]:
+for i in result_list:
     done = False
     break_flag = False
     if i == "ggggg":
@@ -139,21 +133,24 @@ for i in [result_1, result_2, result_3, result_4, result_5, result_6]:
     if break_flag:
       st.write("Please enter either `g`, `y`, or `b`.")
       st.exit()
+        
 if not done:
-    input_dict = {
-        guess_1: result_1,
-        guess_2: result_2,
-        guess_3: result_3,
-        guess_4: result_4,
-        guess_5: result_5,
-        guess_6: result_6,
-    }
-    fivedict = wordle_filter_dict(recent_guess=guess_1, guess_result=result_1, dicti=fivedict)
-    fivedict = wordle_filter_dict(recent_guess=guess_2, guess_result=result_2, dicti=fivedict)
-    fivedict = wordle_filter_dict(recent_guess=guess_3, guess_result=result_3, dicti=fivedict)
-    fivedict = wordle_filter_dict(recent_guess=guess_4, guess_result=result_4, dicti=fivedict)
-    fivedict = wordle_filter_dict(recent_guess=guess_5, guess_result=result_5, dicti=fivedict)
-    fivedict = wordle_filter_dict(recent_guess=guess_6, guess_result=result_6, dicti=fivedict)
+    input_dict = dict(zip(guess_list, result_list))
+    for i, j in input_dict.items():
+        fivedict = wordle_filter_dict(recent_guess=i, guess_result=j, dicti=fivedict)
     top_26_dict = common_letters(fivedict)
-    guess = best_words(fivedict, top_26_dict)[0][1]
-    st.title(f"Your best guess is: {guess}")
+    word_dict = best_words(fivedict, top_26_dict)
+    if len(word_dict) > 1:
+        num_display = st.slider("How many suggested guesses should we display? (max 50)", min_value=1, max_value=min(len(word_dict), 50), step = 1, value = 1)
+    else:
+        st.write("There is just one option.")
+        num_display = 1
+    df = pd.DataFrame(word_dict.items(), columns = ["Words", "Values"]) #convert to dataframe
+    df = df.sort_values(by = 'Values', ascending=False) #Sort by values, not alphabetical
+    df = df.reset_index(drop = True) #reset index to 0, 1, 2...
+    df = df.head(num_display) #Take top guesses to display
+    if num_display == 1:
+        st.title("Your best guess is:")
+    else:
+        st.title("Your best guesses are:")
+    st.table(df)
