@@ -23,6 +23,8 @@ def get_dictionary(word_len, remove_duplicates=False):
     words = word_file.readlines()
     word_file.close()
     trimmed_dictionary = [i[:-1] for i in words if len(i[:-1]) == word_len]
+    trimmed_dictionary.remove("oreas") #not real words but the solver says they are best guesses
+    trimmed_dictionary.remove("seora") #not real words but the solver says they are best guesses
     if remove_duplicates:
         no_duplicates = [i for i in trimmed_dictionary if len(set(i)) == word_len]
         return no_duplicates
@@ -109,12 +111,14 @@ st.markdown('''
 ### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:
 ''')
 st.write(
-    "Welcome to a solver for Wordle! Just enter the guesses and their results and the solver will print out your best options to guess. In this version of Wordle, duplicate letters are weighted less. Also, format the result of your guess by typing a g for a correct letter guessed, y for a letter in the wrong spot, and b for a letter that's not in the correct wordle. For example, you might enter \"bbgyb\". Enjoy!")
+    "Welcome to a solver for Wordle! Enter your guesses and their results and the solver will"
+    " print out your best options to guess. For the results, enter \'b\' for a black square, "
+    "\'y\' for a yellow square, and \'g\' for a green square, i.e. \'bbygb\'. Enjoy!")
 
 
 fivedict = get_dictionary(n, False)
 col = st.columns(2)
-ordinal = ['first', 'second', 'third', 'forth', 'fifth', 'sixth']
+ordinal = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth']
 guess_list = []
 result_list = []
 for i in range(6):
