@@ -140,7 +140,7 @@ for i in result_list:
       st.stop()
 
 if not done:
-    input_dict = dict(zip(guess_list, result_list))
+    input_dict = dict(zip([i.lower() for i in guess_list], [i.lower() for i in result_list]))
     for i, j in input_dict.items():
         fivedict = wordle_filter_dict(recent_guess=i, guess_result=j, dicti=fivedict)
     top_26_dict = common_letters(fivedict)
