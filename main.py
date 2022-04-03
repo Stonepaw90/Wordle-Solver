@@ -124,8 +124,8 @@ result_list = []
 for i in range(6):
     guess_list.append(col[0].text_input(f"What was your {ordinal[i]} guess?", max_chars = 5))
     result_list.append(col[1].text_input(f"What was the result of your {ordinal[i]} guess, using only b,y,g?", max_chars=5))
-guess_list = [i.lower() for i in guess_list]
-result_list = [i.lower() for i in result_list]
+#guess_list = [i.lower() for i in guess_list]
+#result_list = [i.lower() for i in result_list]
 for i in result_list:
     done = False
     break_flag = False
